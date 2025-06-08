@@ -5,23 +5,49 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
+import { useQuery } from "@tanstack/react-query"; // لاستخدام react-query
+import axios from "axios"; // لجلب البيانات
 
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+// دالة لجلب بيانات التعليم
+const fetchEducation = async (id: string) => {
+  const apiUrl = "https://x8ki-letl-twmt.n7.xano.io/api:iHm_4suj";
+  const response = await axios.get(`${apiUrl}/education/${id}`);
+  return response.data;
+};
+
+const App = () => {
+  // استخدام useQuery لجلب البيانات
+  const { data: education, isLoading, error } = useQuery({
+    queryKey: ["education", "1"], // المفتاح الفريد للاستعلام، استبدل '1' بالمعرف المناسب
+    queryFn: () => fetchEducation("1"), // استبدل '1' بالمعرف المناسب
+  });
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <Index
+                  education={education}
+                  isLoading={isLoading}
+                  error={error}
+                />
+              }
+            />
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
+  );
+};
 
 export default App;
