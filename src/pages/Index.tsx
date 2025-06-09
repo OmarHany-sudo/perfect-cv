@@ -10,7 +10,6 @@ const Index = ({ education, isLoading, error }: { education: any; isLoading: boo
       <BenefitsSection />
       <TemplateTeaser />
       <CTASection />
-      {/* إضافة عرض بيانات التعليم */}
       <div className="p-4">
         {isLoading ? (
           <p className="text-center">جاري التحميل...</p>
